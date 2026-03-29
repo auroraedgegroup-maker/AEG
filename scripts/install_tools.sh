@@ -72,6 +72,55 @@ PY
   chmod +x "$BIN_DIR/supabase"
 }
 
+install_gh() {
+  if [[ -x "$BIN_DIR/gh" ]]; then
+    echo "gh already installed"
+    return
+  fi
+
+  echo "installing github cli..."
+  local asset_url archive_path extract_dir
+  asset_url="$(python3 - <<'PY'
+import json
+import urllib.request
+
+with urllib.request.urlopen("https://api.github.com/repos/cli/cli/releases/latest") as response:
+    release = json.load(response)
+
+asset = None
+for item in release.get("assets", []):
+    name = item.get("name", "")
+    if name.endswith("macOS_arm64.zip") and name.startswith("gh_"):
+        asset = item.get("browser_download_url")
+        break
+
+if not asset:
+    raise SystemExit("Could not find a GitHub CLI macOS arm64 archive in latest release assets.")
+
+print(asset)
+PY
+)"
+
+  archive_path="$TMP_DIR/gh_macos_arm64.zip"
+  extract_dir="$TMP_DIR/gh"
+  rm -rf "$extract_dir"
+
+  curl -fsSL "$asset_url" -o "$archive_path"
+  mkdir -p "$extract_dir"
+  ditto -x -k "$archive_path" "$extract_dir"
+
+  local gh_binary
+  gh_binary="$(find "$extract_dir" -type f -path '*/bin/gh' | head -n 1)"
+  if [[ -z "$gh_binary" ]]; then
+    echo "GitHub CLI archive contents:"
+    find "$extract_dir" -maxdepth 4 -type f
+    exit 1
+  fi
+
+  mv "$gh_binary" "$BIN_DIR/gh"
+  chmod +x "$BIN_DIR/gh"
+}
+
 print_next_steps() {
   cat <<EOF
 
@@ -81,10 +130,12 @@ Installed tools into:
 Use them with:
   export PATH="$BIN_DIR:\$PATH"
   deno --version
+  gh --version
   supabase --version
 EOF
 }
 
 install_deno
+install_gh
 install_supabase
 print_next_steps

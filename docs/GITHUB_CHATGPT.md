@@ -6,7 +6,32 @@
 - Repository name: `aurora-edge-group`
 - Suggested visibility: `private` until you are ready to share it
 
-## Local repo push
+## Install local tools
+
+```bash
+cd /Users/christopherrojas/Documents/New\ project/aurora-edge-group
+bash scripts/install_tools.sh
+source scripts/use_tools.sh
+```
+
+## Publish the repo
+
+1. Authenticate GitHub CLI:
+
+```bash
+cd /Users/christopherrojas/Documents/New\ project/aurora-edge-group
+source scripts/use_tools.sh
+gh auth login --web --git-protocol https
+```
+
+2. Create the repository and push this project:
+
+```bash
+cd /Users/christopherrojas/Documents/New\ project/aurora-edge-group
+bash scripts/publish_github_repo.sh
+```
+
+## Manual push fallback
 
 ```bash
 cd /Users/christopherrojas/Documents/New\ project/aurora-edge-group
