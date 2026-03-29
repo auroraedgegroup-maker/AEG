@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Aurora Edge Group AWS foundation for low-cost automation and knowledge storage.
+
+Parameters:
+  BrandSlug:
+    Type: String
+    Default: aurora-edge-group
+    AllowedPattern: '^[a-z0-9-]+$'
+  BillingEmail:
+    Type: String
+    Default: ''
+  MonthlyBudgetLimitUsd:
+    Type: Number
+    Default: 10
+
+Conditions:
+  HasBillingEmail: !Not [!Equals [!Ref BillingEmail, '']]
+
+Resources:
+  KnowledgeBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${BrandSlug}-${AWS::AccountId}-${AWS::Region}-knowledge'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: abort-multipart-uploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+      Tags:
+        - Key: Project
+          Value: AuroraEdge
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  KnowledgeBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref KnowledgeBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyUnencryptedTransport
+            Effect: Deny
+            Principal: '*'
+            Action: 's3:*'
+            Resource:
+              - !GetAtt KnowledgeBucket.Arn
+              - !Sub '${KnowledgeBucket.Arn}/*'
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+
+  KnowledgeIndexTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${BrandSlug}-knowledge-index'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+        - AttributeName: gsi1pk
+          AttributeType: S
+        - AttributeName: gsi1sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: gsi1
+          KeySchema:
+            - AttributeName: gsi1pk
+              KeyType: HASH
+            - AttributeName: gsi1sk
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      SSESpecification:
+        SSEEnabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Project
+          Value: AuroraEdge
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  MonthlyBudget:
+    Type: AWS::Budgets::Budget
+    Condition: HasBillingEmail
+    Properties:
+      Budget:
+        BudgetName: !Sub '${BrandSlug}-monthly-budget'
+        BudgetType: COST
+        TimeUnit: MONTHLY
+        BudgetLimit:
+          Amount: !Ref MonthlyBudgetLimitUsd
+          Unit: USD
+      NotificationsWithSubscribers:
+        - Notification:
+            NotificationType: ACTUAL
+            ComparisonOperator: GREATER_THAN
+            Threshold: 80
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref BillingEmail
+        - Notification:
+            NotificationType: FORECASTED
+            ComparisonOperator: GREATER_THAN
+            Threshold: 100
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref BillingEmail
+
+Outputs:
+  KnowledgeBucketName:
+    Value: !Ref KnowledgeBucket
+  KnowledgeBucketArn:
+    Value: !GetAtt KnowledgeBucket.Arn
+  KnowledgeIndexTableName:
+    Value: !Ref KnowledgeIndexTable
+  BudgetName:
+    Condition: HasBillingEmail
+    Value: !Sub '${BrandSlug}-monthly-budget'

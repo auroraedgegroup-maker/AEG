@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aurora Edge Group | Client Intake</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell page-shell-tight">
+      <main class="panel intake-panel">
+        <span class="eyebrow">Payment received</span>
+        <h1>Client intake</h1>
+        <p class="hero-text">
+          Complete this form once. Aurora Edge Group will generate the audit or implementation pack
+          automatically after submission.
+        </p>
+
+        <form id="intake-form" class="lead-form">
+          <label>
+            Website URL
+            <input type="url" name="website" placeholder="https://yourbusiness.com" required />
+          </label>
+          <label>
+            Main service sold
+            <input type="text" name="primaryOffer" placeholder="Roof replacements" required />
+          </label>
+          <label>
+            City or service area
+            <input type="text" name="serviceArea" placeholder="Louisville, KY" required />
+          </label>
+          <label>
+            CRM today
+            <input type="text" name="crm" placeholder="GoHighLevel, HubSpot, Jobber, none" />
+          </label>
+          <label class="full-width">
+            Current follow-up process
+            <textarea
+              name="salesFollowUp"
+              rows="4"
+              placeholder="Describe what happens after a form fill, missed call, estimate, or inbound lead."
+              required
+            ></textarea>
+          </label>
+          <label class="full-width">
+            Main goal in the next 30 days
+            <textarea
+              name="goals"
+              rows="3"
+              placeholder="Example: book 10 extra estimate appointments, revive old pipeline, stop losing missed calls."
+              required
+            ></textarea>
+          </label>
+          <label class="full-width">
+            Notes for the build
+            <textarea
+              name="notes"
+              rows="4"
+              placeholder="Brand voice, competitors, team details, offer details, links, and constraints."
+            ></textarea>
+          </label>
+          <div class="form-actions full-width">
+            <button class="primary-button" type="submit">Submit Intake</button>
+            <span id="intake-form-status" class="status-text"></span>
+          </div>
+        </form>
+      </main>
+    </div>
+
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

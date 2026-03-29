@@ -1,0 +1,46 @@
+# GitHub + ChatGPT
+
+## GitHub repo target
+
+- Owner: `chrisalvarezr-spec`
+- Repository name: `aurora-edge-group`
+- Suggested visibility: `private` until you are ready to share it
+
+## Local repo push
+
+```bash
+cd /Users/christopherrojas/Documents/New\ project/aurora-edge-group
+git remote add origin git@github.com:chrisalvarezr-spec/aurora-edge-group.git
+git push -u origin main
+```
+
+If you prefer HTTPS:
+
+```bash
+cd /Users/christopherrojas/Documents/New\ project/aurora-edge-group
+git remote add origin https://github.com/chrisalvarezr-spec/aurora-edge-group.git
+git push -u origin main
+```
+
+## Connect the repo to ChatGPT
+
+1. Open ChatGPT Settings.
+2. Go to `Apps`.
+3. Select `GitHub`.
+4. Install and authorize the ChatGPT GitHub app.
+5. Grant access to `chrisalvarezr-spec/aurora-edge-group`.
+6. Wait about 5 minutes for the repository to appear in ChatGPT.
+
+If the repo still does not appear, search for this in GitHub to trigger indexing:
+
+```text
+repo:chrisalvarezr-spec/aurora-edge-group import
+```
+
+## What ChatGPT can do after connection
+
+- Read the repository code and docs
+- Search the repo from prompts
+- Cite files and snippets from the repo
+
+ChatGPT's GitHub app does not push code changes back to GitHub. For write access and PR workflows, keep using Codex.

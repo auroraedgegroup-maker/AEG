@@ -1,0 +1,10 @@
+{
+  "name": "Roofing Follow-Up Audit",
+  "sender_name": "Christopher | Aurora Edge Group",
+  "required_niche": "Roofing",
+  "subject_template": "Quick idea for {business_name}",
+  "proof_line": "I help roofing businesses in {city} recover missed calls, cold estimates, and slow lead response without adding office staff.",
+  "offer_line": "We built a simple AI Follow-Up Audit that maps where quotes are leaking and gives you the exact follow-up sequence to tighten first.",
+  "cta_line": "If you want to see the audit offer, start here: {site_url}",
+  "opt_out_line": "If this is not a fit, reply and I will close the loop."
+}

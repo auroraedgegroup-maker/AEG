@@ -1,0 +1,19 @@
+.DS_Store
+.env
+.env.local
+.env.*.local
+.tools/
+.venv/
+node_modules/
+
+# Generated previews and account-specific exports
+outbox/
+aws/exports/
+*.log
+*.zip
+
+# Common local deploy/cache folders
+.netlify/
+.wrangler/
+dist/
+build/

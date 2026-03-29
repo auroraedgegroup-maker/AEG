@@ -1,0 +1,160 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Aurora Edge Group lead intake API using API Gateway, Lambda, and DynamoDB.
+
+Parameters:
+  BrandSlug:
+    Type: String
+    Default: aurora-edge-group
+    AllowedPattern: '^[a-z0-9-]+$'
+  CodeS3Bucket:
+    Type: String
+  CodeS3Key:
+    Type: String
+  SiteOrigin:
+    Type: String
+    Default: 'http://localhost:8080'
+
+Resources:
+  LeadsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${BrandSlug}-leads'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+        - AttributeName: gsi1pk
+          AttributeType: S
+        - AttributeName: gsi1sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: gsi1
+          KeySchema:
+            - AttributeName: gsi1pk
+              KeyType: HASH
+            - AttributeName: gsi1sk
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      SSESpecification:
+        SSEEnabled: true
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Project
+          Value: AuroraEdge
+        - Key: ManagedBy
+          Value: CloudFormation
+
+  LeadIntakeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub '${BrandSlug}-lead-intake-role'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: lead-intake-dynamodb
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                Resource: !GetAtt LeadsTable.Arn
+      Tags:
+        - Key: Project
+          Value: AuroraEdge
+
+  LeadIntakeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${BrandSlug}-lead-intake'
+      RetentionInDays: 14
+
+  LeadIntakeFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${BrandSlug}-lead-intake'
+      Runtime: python3.12
+      Handler: handler.lambda_handler
+      Role: !GetAtt LeadIntakeRole.Arn
+      Timeout: 10
+      MemorySize: 256
+      Code:
+        S3Bucket: !Ref CodeS3Bucket
+        S3Key: !Ref CodeS3Key
+      Environment:
+        Variables:
+          LEADS_TABLE_NAME: !Ref LeadsTable
+          SITE_ORIGIN: !Ref SiteOrigin
+      Tags:
+        - Key: Project
+          Value: AuroraEdge
+
+  LeadIntakeApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub '${BrandSlug}-lead-intake-api'
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins:
+          - !Ref SiteOrigin
+        AllowMethods:
+          - POST
+          - OPTIONS
+        AllowHeaders:
+          - content-type
+        MaxAge: 86400
+
+  LeadIntakeIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref LeadIntakeApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt LeadIntakeFunction.Arn
+      PayloadFormatVersion: '2.0'
+
+  LeadIntakeRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref LeadIntakeApi
+      RouteKey: 'POST /lead'
+      Target: !Sub 'integrations/${LeadIntakeIntegration}'
+
+  LeadIntakeStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref LeadIntakeApi
+      StageName: '$default'
+      AutoDeploy: true
+
+  LeadIntakePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LeadIntakeFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${LeadIntakeApi}/*/*/lead'
+
+Outputs:
+  LeadsTableName:
+    Value: !Ref LeadsTable
+  LeadIntakeFunctionName:
+    Value: !Ref LeadIntakeFunction
+  LeadIntakeApiUrl:
+    Value: !Sub 'https://${LeadIntakeApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/lead'
