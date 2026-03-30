@@ -7,10 +7,10 @@ source "$ROOT_DIR/scripts/use_tools.sh"
 
 WEBSITE_URL="${WEBSITE_URL:-${1:-}}"
 CONTACT_EMAIL="${CONTACT_EMAIL:-auroraedgegroup@gmail.com}"
-MAIL_TYPE="${MAIL_TYPE:-MARKETING}"
+MAIL_TYPE="${MAIL_TYPE:-TRANSACTIONAL}"
 CONTACT_LANGUAGE="${CONTACT_LANGUAGE:-EN}"
 REGION="${AWS_REGION:-$(aws configure get region || true)}"
-USE_CASE_DESCRIPTION="${USE_CASE_DESCRIPTION:-Aurora Edge Group sends personalized cold outreach and follow-up emails to local businesses that match our target service niches. Each message is human-reviewed or based on explicit business contact data, includes clear business identification, and will honor opt-out requests. We also send transactional onboarding and delivery emails to paying clients.}"
+USE_CASE_DESCRIPTION="${USE_CASE_DESCRIPTION:-Aurora Edge Group sends transactional order confirmations, customer intake reminders, purchased deliverable notifications, and responses to opt-in business inquiries submitted through our public website.}"
 
 if [[ -z "$WEBSITE_URL" ]]; then
   echo "Usage: WEBSITE_URL=https://yourdomain.com bash scripts/request_ses_production_access.sh" >&2

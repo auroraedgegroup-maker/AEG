@@ -1,6 +1,7 @@
-window.AEG_CONFIG = {
+window.APP_CONFIG = {
   brandName: "Aurora Edge Group",
-  leadCaptureUrl: "https://YOUR_API_ID.execute-api.us-east-1.amazonaws.com/lead",
-  functionsBaseUrl: "https://YOUR_PROJECT.supabase.co/functions/v1",
-  publicSiteUrl: "https://YOUR_NETLIFY_SITE.netlify.app"
+  supabaseUrl: "https://YOUR_REAL_PROJECT.supabase.co",
+  supabaseAnonKey: "YOUR_REAL_SUPABASE_ANON_KEY",
+  functionsBaseUrl: "https://YOUR_REAL_PROJECT.supabase.co/functions/v1",
+  publicSiteUrl: "https://YOUR_PUBLIC_SITE_URL"
 };

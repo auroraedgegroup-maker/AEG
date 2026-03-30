@@ -1,4 +1,4 @@
-const config = window.AEG_CONFIG || {};
+const config = window.APP_CONFIG || window.AEG_CONFIG || {};
 
 const offerLabels = {
   "followup-audit": "AI Follow-Up Audit",
@@ -19,9 +19,7 @@ function setStatus(node, message, tone = "") {
 async function postJson(url, payload) {
   const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: buildHeaders(),
     body: JSON.stringify(payload)
   });
 
@@ -32,18 +30,28 @@ async function postJson(url, payload) {
   return body;
 }
 
+function buildHeaders() {
+  const headers = {
+    "Content-Type": "application/json"
+  };
+
+  if (
+    typeof config.supabaseAnonKey === "string" &&
+    config.supabaseAnonKey &&
+    !config.supabaseAnonKey.includes("YOUR_")
+  ) {
+    headers.Authorization = `Bearer ${config.supabaseAnonKey}`;
+    headers.apikey = config.supabaseAnonKey;
+  }
+
+  return headers;
+}
+
 function getSupabaseFunctionUrl(endpoint) {
   if (!isConfiguredUrl(config.functionsBaseUrl)) {
     throw new Error(`Set functionsBaseUrl in site/config.js before using ${endpoint}.`);
   }
-  return `${config.functionsBaseUrl}/${endpoint}`;
-}
-
-function getLeadCaptureUrl() {
-  if (isConfiguredUrl(config.leadCaptureUrl)) {
-    return config.leadCaptureUrl;
-  }
-  return getSupabaseFunctionUrl("lead-intake");
+  return `${config.functionsBaseUrl.replace(/\/$/, "")}/${endpoint}`;
 }
 
 async function handleAuditFormSubmit(event) {
@@ -54,13 +62,20 @@ async function handleAuditFormSubmit(event) {
 
   try {
     setStatus(statusNode, "Sending your audit request...", "");
-    await postJson(getLeadCaptureUrl(), {
-      source: "website",
-      offerInterest: "AI Follow-Up Audit",
-      ...data
+    await postJson(getSupabaseFunctionUrl("lead-intake"), {
+      name: data.name,
+      businessName: data.businessName,
+      email: data.email,
+      phone: data.phone,
+      website: data.website,
+      city: data.city,
+      niche: data.niche,
+      painPoint: data.painPoint,
+      source: "site_free_audit",
+      offerInterest: "AI Follow-Up Audit"
     });
     form.reset();
-    setStatus(statusNode, "Lead captured. Check your inbox for the next step.", "success");
+    setStatus(statusNode, "Lead captured. Aurora Edge Group will follow up with the next step.", "success");
   } catch (error) {
     setStatus(statusNode, error.message, "error");
   }
@@ -85,9 +100,10 @@ async function handleCheckout(offerId) {
     setStatus(statusNode, `Opening checkout for ${offerLabels[offerId]}...`, "");
     const body = await postJson(getSupabaseFunctionUrl("create-checkout"), {
       offerId,
+      source: "site_paid_offer",
       ...data
     });
-    window.location.href = body.checkoutUrl;
+    window.location.href = body.checkoutUrl || body.url;
   } catch (error) {
     setStatus(statusNode, error.message, "error");
   }

@@ -7,7 +7,7 @@ export async function sendSms(args: {
   const from = Deno.env.get("TWILIO_FROM_NUMBER");
 
   if (!accountSid || !authToken || !from) {
-    return { sent: false, reason: "Missing Twilio environment variables" };
+    throw new Error("Missing TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, or TWILIO_FROM_NUMBER");
   }
 
   const credentials = btoa(`${accountSid}:${authToken}`);

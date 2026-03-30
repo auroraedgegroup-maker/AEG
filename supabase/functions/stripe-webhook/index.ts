@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.25.0?target=deno";
 import { createServiceClient } from "../_shared/supabase.ts";
 import { handleOptions, jsonResponse } from "../_shared/http.ts";
-import { sendEmail } from "../_shared/resend.ts";
+import { canSendExternalEmail, isEmailConfigured, sendEmail } from "../_shared/resend.ts";
 
 serve(async (request) => {
   if (request.method === "OPTIONS") {
@@ -19,7 +19,7 @@ serve(async (request) => {
     }
 
     const stripe = new Stripe(stripeKey, {
-      apiVersion: "2024-06-20"
+      apiVersion: "2026-02-25.clover"
     });
 
     const signature = request.headers.get("stripe-signature");
@@ -37,7 +37,9 @@ serve(async (request) => {
         .from("orders")
         .update({
           status: "paid",
-          stripe_payment_intent_id: String(session.payment_intent || "")
+          stripe_payment_intent_id: String(session.payment_intent || ""),
+          delivery_status: "queued",
+          delivery_error: null
         })
         .eq("stripe_checkout_session_id", session.id)
         .select("id, lead_id, client_email, client_name, offer_name")
@@ -66,24 +68,71 @@ serve(async (request) => {
         }
       });
 
-      await sendEmail({
-        to: order.client_email,
-        subject: `${order.offer_name}: complete your intake`,
-        text: `Hi ${order.client_name},\n\nPayment is in. Complete your intake here so Aurora Edge Group can generate your delivery pack:\n${publicSiteUrl}/thank-you.html?session_id=${session.id}\n`
-      });
+      if (isEmailConfigured()) {
+        if (canSendExternalEmail()) {
+          await sendEmail({
+            to: order.client_email,
+            subject: `${order.offer_name}: complete your intake`,
+            text: `Hi ${order.client_name},\n\nPayment is in. Complete your intake here so Aurora Edge Group can generate your delivery pack:\n${publicSiteUrl}/thank-you.html?session_id=${session.id}\n`
+          });
+        } else {
+          await supabase.from("lead_activity").insert({
+            lead_id: order.lead_id,
+            order_id: order.id,
+            event_type: "payment_customer_email_skipped",
+            channel: "email",
+            subject: order.offer_name,
+            message:
+              "Customer intake email was skipped because the sender is using Resend's onboarding domain.",
+            metadata: {
+              stripe_checkout_session_id: session.id
+            }
+          });
+        }
 
-      const adminEmail = Deno.env.get("ADMIN_EMAIL");
-      if (adminEmail) {
-        await sendEmail({
-          to: adminEmail,
-          subject: `Paid order: ${order.offer_name}`,
-          text: `Client: ${order.client_name}\nEmail: ${order.client_email}\nIntake URL: ${publicSiteUrl}/thank-you.html?session_id=${session.id}`
+        const adminEmail = Deno.env.get("ADMIN_EMAIL");
+        if (adminEmail) {
+          try {
+            await sendEmail({
+              to: adminEmail,
+              subject: `Paid order: ${order.offer_name}`,
+              text: `Client: ${order.client_name}\nEmail: ${order.client_email}\nIntake URL: ${publicSiteUrl}/thank-you.html?session_id=${session.id}`
+            });
+          } catch (adminError) {
+            const adminMessage =
+              adminError instanceof Error ? adminError.message : String(adminError);
+
+            await supabase.from("lead_activity").insert({
+              lead_id: order.lead_id,
+              order_id: order.id,
+              event_type: "payment_admin_email_failed",
+              channel: "email",
+              subject: order.offer_name,
+              message: adminMessage,
+              metadata: {
+                stripe_checkout_session_id: session.id
+              }
+            });
+          }
+        }
+      } else {
+        await supabase.from("lead_activity").insert({
+          lead_id: order.lead_id,
+          order_id: order.id,
+          event_type: "payment_email_skipped",
+          channel: "email",
+          subject: order.offer_name,
+          message: "Payment emails were skipped because Resend is not configured.",
+          metadata: {
+            stripe_checkout_session_id: session.id
+          }
         });
       }
     }
 
     return jsonResponse({ received: true });
   } catch (error) {
-    return jsonResponse({ error: error.message }, 400);
+    const message = error instanceof Error ? error.message : String(error);
+    return jsonResponse({ error: message }, 400);
   }
 });

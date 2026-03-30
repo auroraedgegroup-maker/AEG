@@ -23,7 +23,11 @@ serve(async (request) => {
       .single();
 
     if (orderError || !order) {
-      throw new Error("Order not found");
+      return jsonResponse({ error: "Order not found" }, 404);
+    }
+
+    if (!["paid", "fulfilled"].includes(order.status)) {
+      return jsonResponse({ error: "Order not paid" }, 403);
     }
 
     const { error: intakeError } = await supabase.from("intake_responses").upsert({
@@ -43,8 +47,17 @@ serve(async (request) => {
 
     await supabase.from("deliverables").upsert({
       order_id: order.id,
-      status: "queued"
+      status: "queued",
+      last_error: null
     });
+
+    await supabase
+      .from("orders")
+      .update({
+        delivery_status: "queued",
+        delivery_error: null
+      })
+      .eq("id", order.id);
 
     await supabase.from("lead_activity").insert({
       lead_id: order.lead_id,
@@ -58,18 +71,42 @@ serve(async (request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (supabaseUrl && serviceKey) {
-      fetch(`${supabaseUrl}/functions/v1/generate-delivery`, {
+      const response = await fetch(`${supabaseUrl}/functions/v1/generate-delivery`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${serviceKey}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({ orderId: order.id })
-      }).catch(() => null);
+      }).catch((error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        throw new Error(`Delivery trigger failed: ${message}`);
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+
+        await supabase.from("deliverables").upsert({
+          order_id: order.id,
+          status: "failed",
+          last_error: text
+        });
+
+        await supabase
+          .from("orders")
+          .update({
+            delivery_status: "failed",
+            delivery_error: text
+          })
+          .eq("id", order.id);
+
+        return jsonResponse({ error: `Delivery trigger failed: ${text}` }, 500);
+      }
     }
 
     return jsonResponse({ ok: true, orderId: order.id });
   } catch (error) {
-    return jsonResponse({ error: error.message }, 400);
+    const message = error instanceof Error ? error.message : String(error);
+    return jsonResponse({ error: message }, 400);
   }
 });

@@ -70,16 +70,21 @@ aws cloudformation describe-stacks \
   --output text
 ```
 
-## Wire the site to the live AWS lead intake
+## AWS lead intake status
 
-`site/config.js` is already pointed at the current live API:
+The AWS lead intake stack still exists, but it should no longer be the primary live website path. The
+website should route free leads, checkout, intake, and delivery through Supabase so the CRM and paid
+flow stay in one system.
+
+Keep the AWS lead intake stack only for reference or future migrations.
+
+The old config looked like this:
 
 ```js
-window.AEG_CONFIG = {
-  brandName: "Aurora Edge Group",
-  leadCaptureUrl: "https://huu5i7tm6e.execute-api.us-east-1.amazonaws.com/lead",
-  functionsBaseUrl: "https://YOUR_PROJECT.supabase.co/functions/v1",
-  publicSiteUrl: "https://YOUR_NETLIFY_SITE.netlify.app"
+window.APP_CONFIG = {
+  supabaseUrl: "https://YOUR_REAL_PROJECT.supabase.co",
+  supabaseAnonKey: "YOUR_REAL_SUPABASE_ANON_KEY",
+  functionsBaseUrl: "https://YOUR_REAL_PROJECT.supabase.co/functions/v1"
 };
 ```
 

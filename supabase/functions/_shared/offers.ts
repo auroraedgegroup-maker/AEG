@@ -9,6 +9,7 @@ export type OfferDefinition = {
   amountCents: number;
   description: string;
   deliveryMode: string;
+  stripePriceEnv: string;
 };
 
 export const offers: Record<OfferId, OfferDefinition> = {
@@ -17,21 +18,24 @@ export const offers: Record<OfferId, OfferDefinition> = {
     name: "AI Follow-Up Audit",
     amountCents: 29700,
     description: "Custom funnel copy, email and SMS follow-up sequence, and implementation roadmap.",
-    deliveryMode: "audit"
+    deliveryMode: "audit",
+    stripePriceEnv: "STRIPE_PRICE_FOLLOWUP_AUDIT"
   },
   "missed-call-system": {
     id: "missed-call-system",
     name: "Missed Call Text-Back Setup",
     amountCents: 75000,
     description: "Instant callback SMS workflow, routing prompts, and sales follow-up scripting.",
-    deliveryMode: "implementation"
+    deliveryMode: "implementation",
+    stripePriceEnv: "STRIPE_PRICE_MISSED_CALL_SYSTEM"
   },
   "lead-reactivation": {
     id: "lead-reactivation",
     name: "Lead Reactivation Sprint",
     amountCents: 150000,
     description: "Three-touch revive campaign with email and SMS copy for stale leads.",
-    deliveryMode: "implementation"
+    deliveryMode: "implementation",
+    stripePriceEnv: "STRIPE_PRICE_LEAD_REACTIVATION"
   }
 };
 

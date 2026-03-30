@@ -4,11 +4,20 @@
 
 ### Netlify
 
-1. Create a new Netlify site.
-2. Point the publish directory to `site/`.
-3. Upload the folder or connect the repo.
-4. Confirm the live URL.
-5. Set `PUBLIC_SITE_URL` and `CORS_ORIGIN` to that URL in Supabase secrets.
+Recommended GitHub deploy:
+
+1. In Netlify, choose `Add new site` -> `Import an existing project`.
+2. Connect GitHub and select `auroraedgegroup-maker/AEG`.
+3. Use branch `main`.
+4. Leave the base directory empty.
+5. Leave the build command empty.
+6. Publish directory is already defined in [netlify.toml](/Users/christopherrojas/Documents/New%20project/aurora-edge-group/netlify.toml) as `site`.
+7. Confirm the live URL is `https://auroraedgeghq.netlify.app`.
+8. In Supabase, set `PUBLIC_SITE_URL=https://auroraedgeghq.netlify.app`.
+9. In Supabase, set `CORS_ORIGIN=https://auroraedgeghq.netlify.app`.
+
+Current live site config should come from:
+- [site/config.js](/Users/christopherrojas/Documents/New%20project/aurora-edge-group/site/config.js)
 
 ### AWS S3 public site
 
@@ -31,7 +40,7 @@ Open:
 http://localhost:8080
 ```
 
-Lead capture is already wired to the live AWS endpoint in `site/config.js`.
+Lead capture, checkout, and intake should all point at Supabase functions in `site/config.js`.
 
 ## Daily outreach trigger
 

@@ -18,7 +18,7 @@ serve(async (request) => {
     }
 
     const stripe = new Stripe(stripeKey, {
-      apiVersion: "2024-06-20"
+      apiVersion: "2026-02-25.clover"
     });
 
     const body = await request.json();
@@ -45,7 +45,7 @@ serve(async (request) => {
           city: body.city || null,
           niche: body.niche || null,
           pain_point: body.painPoint || null,
-          source: "website",
+          source: body.source || "website",
           offer_interest: offer.name
         },
         { onConflict: "email_normalized" }
@@ -58,8 +58,10 @@ serve(async (request) => {
     }
 
     const orderId = crypto.randomUUID();
+    const configuredPriceId = Deno.env.get(offer.stripePriceEnv);
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      payment_method_types: ["card"],
       success_url: `${publicSiteUrl}/thank-you.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${publicSiteUrl}/?checkout=cancelled`,
       customer_email: email,
@@ -68,19 +70,26 @@ serve(async (request) => {
         lead_id: lead.id,
         offer_id: offer.id
       },
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: "usd",
-            unit_amount: offer.amountCents,
-            product_data: {
-              name: offer.name,
-              description: offer.description
+      line_items: configuredPriceId
+        ? [
+            {
+              quantity: 1,
+              price: configuredPriceId
             }
-          }
-        }
-      ]
+          ]
+        : [
+            {
+              quantity: 1,
+              price_data: {
+                currency: "usd",
+                unit_amount: offer.amountCents,
+                product_data: {
+                  name: offer.name,
+                  description: offer.description
+                }
+              }
+            }
+          ]
     });
 
     const { error: orderError } = await supabase.from("orders").insert({
@@ -118,6 +127,7 @@ serve(async (request) => {
       checkoutUrl: session.url
     });
   } catch (error) {
-    return jsonResponse({ error: error.message }, 400);
+    const message = error instanceof Error ? error.message : String(error);
+    return jsonResponse({ error: message }, 400);
   }
 });

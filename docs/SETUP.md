@@ -28,10 +28,13 @@ supabase secrets set \
   PUBLIC_SITE_URL=https://YOUR_NETLIFY_SITE.netlify.app \
   CORS_ORIGIN=https://YOUR_NETLIFY_SITE.netlify.app \
   ADMIN_EMAIL=auroraedgegroup@gmail.com \
-  EMAIL_FROM='Aurora Edge Group <noreply@yourdomain.com>' \
+  MAIL_FROM='Aurora Edge Group <noreply@yourdomain.com>' \
   RESEND_API_KEY=YOUR_RESEND_API_KEY \
   STRIPE_SECRET_KEY=YOUR_STRIPE_SECRET_KEY \
   STRIPE_WEBHOOK_SECRET=YOUR_STRIPE_WEBHOOK_SECRET \
+  STRIPE_PRICE_FOLLOWUP_AUDIT=price_xxx \
+  STRIPE_PRICE_MISSED_CALL_SYSTEM=price_xxx \
+  STRIPE_PRICE_LEAD_REACTIVATION=price_xxx \
   RUN_OUTREACH_TOKEN=SET_A_LONG_RANDOM_STRING
 ```
 
@@ -81,9 +84,11 @@ Subscribe to:
 Edit `site/config.js`:
 
 ```js
-window.AEG_CONFIG = {
+window.APP_CONFIG = {
   brandName: "Aurora Edge Group",
-  functionsBaseUrl: "https://YOUR_PROJECT.supabase.co/functions/v1",
+  supabaseUrl: "https://YOUR_REAL_PROJECT.supabase.co",
+  supabaseAnonKey: "YOUR_REAL_SUPABASE_ANON_KEY",
+  functionsBaseUrl: "https://YOUR_REAL_PROJECT.supabase.co/functions/v1",
   publicSiteUrl: "https://YOUR_NETLIFY_SITE.netlify.app"
 };
 ```
@@ -92,10 +97,11 @@ window.AEG_CONFIG = {
 
 1. Create a free Resend account.
 2. Verify a sending domain.
-3. Add `RESEND_API_KEY` and `EMAIL_FROM`.
+3. Add `RESEND_API_KEY` and `MAIL_FROM`.
 
 ## 7. Add payments
 
 1. Create a Stripe account.
 2. Copy the live secret key into `STRIPE_SECRET_KEY`.
-3. Use the buy buttons on the landing page to open checkout with inline Stripe pricing.
+3. Add the live webhook signing secret to `STRIPE_WEBHOOK_SECRET`.
+4. Optionally add the three `STRIPE_PRICE_*` values so checkout uses your saved Stripe catalog instead of inline prices.

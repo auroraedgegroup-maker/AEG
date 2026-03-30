@@ -70,37 +70,106 @@ serve(async (request) => {
       knowledgeContext
     });
 
+    const generatedAt = new Date().toISOString();
     await supabase.from("deliverables").upsert({
       order_id: order.id,
-      status: "ready",
-      generated_at: new Date().toISOString(),
-      delivered_at: new Date().toISOString(),
+      status: "queued",
+      generated_at: generatedAt,
       delivery_markdown: delivery.markdown,
-      delivery_json: delivery.json
+      delivery_json: delivery.json,
+      last_error: null
     });
 
-    await supabase.from("lead_activity").insert({
-      lead_id: order.lead_id,
-      order_id: order.id,
-      event_type: "delivery_generated",
-      channel: "automation",
-      subject: order.offer_name,
-      message: delivery.markdown
-    });
-
-    await sendEmail({
-      to: order.client_email,
-      subject: `${order.offer_name} delivery for ${lead.business_name}`,
-      text: `Hi ${order.client_name},\n\nYour delivery pack is ready.\n\n${delivery.markdown}`
-    });
-
-    const adminEmail = Deno.env.get("ADMIN_EMAIL");
-    if (adminEmail) {
-      await sendEmail({
-        to: adminEmail,
-        subject: `Delivery generated: ${order.offer_name}`,
-        text: `Client: ${order.client_name}\n\n${delivery.markdown}`
+    try {
+      const emailResult = await sendEmail({
+        to: order.client_email,
+        subject: `${order.offer_name} delivery for ${lead.business_name}`,
+        text: `Hi ${order.client_name},\n\nYour delivery pack is ready.\n\n${delivery.markdown}`
       });
+
+      const deliveredAt = new Date().toISOString();
+      await supabase.from("deliverables").upsert({
+        order_id: order.id,
+        status: "ready",
+        generated_at: generatedAt,
+        delivered_at: deliveredAt,
+        delivery_markdown: delivery.markdown,
+        delivery_json: delivery.json,
+        last_error: null
+      });
+
+      await supabase
+        .from("orders")
+        .update({
+          status: "fulfilled",
+          delivery_status: "sent",
+          delivery_error: null,
+          delivery_provider_id: String(emailResult?.id || ""),
+          fulfilled_at: deliveredAt
+        })
+        .eq("id", order.id);
+
+      await supabase.from("lead_activity").insert({
+        lead_id: order.lead_id,
+        order_id: order.id,
+        event_type: "delivery_generated",
+        channel: "automation",
+        subject: order.offer_name,
+        message: delivery.markdown
+      });
+
+      const adminEmail = Deno.env.get("ADMIN_EMAIL");
+      if (adminEmail) {
+        try {
+          await sendEmail({
+            to: adminEmail,
+            subject: `Delivery generated: ${order.offer_name}`,
+            text: `Client: ${order.client_name}\n\n${delivery.markdown}`
+          });
+        } catch (adminError) {
+          const adminMessage =
+            adminError instanceof Error ? adminError.message : String(adminError);
+
+          await supabase.from("lead_activity").insert({
+            lead_id: order.lead_id,
+            order_id: order.id,
+            event_type: "delivery_admin_notification_failed",
+            channel: "automation",
+            subject: order.offer_name,
+            message: adminMessage
+          });
+        }
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+
+      await supabase.from("deliverables").upsert({
+        order_id: order.id,
+        status: "failed",
+        generated_at: generatedAt,
+        delivery_markdown: delivery.markdown,
+        delivery_json: delivery.json,
+        last_error: message
+      });
+
+      await supabase
+        .from("orders")
+        .update({
+          delivery_status: "failed",
+          delivery_error: message
+        })
+        .eq("id", order.id);
+
+      await supabase.from("lead_activity").insert({
+        lead_id: order.lead_id,
+        order_id: order.id,
+        event_type: "delivery_failed",
+        channel: "automation",
+        subject: order.offer_name,
+        message
+      });
+
+      throw error;
     }
 
     return jsonResponse({
@@ -108,6 +177,7 @@ serve(async (request) => {
       orderId: order.id
     });
   } catch (error) {
-    return jsonResponse({ error: error.message }, 400);
+    const message = error instanceof Error ? error.message : String(error);
+    return jsonResponse({ error: message }, 400);
   }
 });

@@ -18,6 +18,7 @@ create table if not exists public.leads (
   lead_status text not null default 'new',
   outreach_status text not null default 'draft',
   outreach_step integer not null default 0,
+  outreach_retry_count integer not null default 0,
   channel_preference text not null default 'email',
   next_action_at timestamptz,
   last_contacted_at timestamptz,
@@ -41,6 +42,10 @@ create table if not exists public.orders (
   amount_cents integer not null,
   currency text not null default 'usd',
   status text not null default 'pending',
+  delivery_status text not null default 'queued',
+  delivery_error text,
+  delivery_provider_id text,
+  fulfilled_at timestamptz,
   client_name text not null,
   client_email text not null,
   intake_token text not null default encode(gen_random_bytes(12), 'hex'),
@@ -74,10 +79,30 @@ create table if not exists public.deliverables (
   generated_at timestamptz,
   delivered_at timestamptz,
   delivery_markdown text,
-  delivery_json jsonb not null default '{}'::jsonb
+  delivery_json jsonb not null default '{}'::jsonb,
+  last_error text
 );
 
 create index if not exists deliverables_status_idx on public.deliverables (status);
+create index if not exists orders_delivery_status_idx on public.orders (delivery_status);
+
+alter table public.leads
+  add column if not exists outreach_retry_count integer not null default 0;
+
+alter table public.orders
+  add column if not exists delivery_status text not null default 'queued';
+
+alter table public.orders
+  add column if not exists delivery_error text;
+
+alter table public.orders
+  add column if not exists delivery_provider_id text;
+
+alter table public.orders
+  add column if not exists fulfilled_at timestamptz;
+
+alter table public.deliverables
+  add column if not exists last_error text;
 
 create table if not exists public.knowledge_documents (
   id uuid primary key default gen_random_uuid(),

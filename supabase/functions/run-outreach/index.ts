@@ -23,9 +23,13 @@ serve(async (request) => {
     const now = new Date().toISOString();
     const publicSiteUrl = Deno.env.get("PUBLIC_SITE_URL") || "";
 
+    if (!publicSiteUrl) {
+      throw new Error("Missing PUBLIC_SITE_URL");
+    }
+
     const { data: leads, error } = await supabase
       .from("leads")
-      .select("id, name, business_name, email, phone, niche, pain_point, city, offer_interest, outreach_step, channel_preference")
+      .select("id, name, business_name, email, phone, niche, pain_point, city, offer_interest, outreach_step, outreach_retry_count, channel_preference")
       .eq("outreach_status", "queued")
       .lte("next_action_at", now)
       .limit(25);
@@ -49,49 +53,77 @@ serve(async (request) => {
       });
 
       let channel = "email";
-      if (lead.channel_preference === "sms" && lead.phone) {
-        channel = "sms";
-        await sendSms({
-          to: lead.phone,
-          body: message.body
-        });
-      } else {
-        await sendEmail({
-          to: lead.email,
+      try {
+        if (lead.channel_preference === "sms" && lead.phone) {
+          channel = "sms";
+          await sendSms({
+            to: lead.phone,
+            body: message.body
+          });
+        } else {
+          await sendEmail({
+            to: lead.email,
+            subject: message.subject,
+            text: message.body
+          });
+        }
+
+        const nextStep = lead.outreach_step + 1;
+        const nextActionAt =
+          nextStep >= 3
+            ? null
+            : new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
+
+        await supabase.from("leads").update({
+          outreach_step: nextStep,
+          outreach_status: nextStep >= 3 ? "completed" : "queued",
+          outreach_retry_count: 0,
+          last_contacted_at: now,
+          next_action_at: nextActionAt
+        }).eq("id", lead.id);
+
+        await supabase.from("lead_activity").insert({
+          lead_id: lead.id,
+          event_type: "outreach_sent",
+          channel,
           subject: message.subject,
-          text: message.body
+          message: message.body,
+          metadata: {
+            step: lead.outreach_step
+          }
+        });
+
+        processed.push({
+          leadId: lead.id,
+          channel,
+          step: nextStep
+        });
+      } catch (error) {
+        const messageText = error instanceof Error ? error.message : String(error);
+
+        await supabase.from("leads").update({
+          outreach_status: "failed",
+          outreach_retry_count: (lead.outreach_retry_count || 0) + 1
+        }).eq("id", lead.id);
+
+        await supabase.from("lead_activity").insert({
+          lead_id: lead.id,
+          event_type: "outreach_failed",
+          channel,
+          subject: message.subject,
+          message: messageText,
+          metadata: {
+            step: lead.outreach_step
+          }
+        });
+
+        processed.push({
+          leadId: lead.id,
+          channel,
+          step: lead.outreach_step,
+          error: messageText
         });
       }
-
-      const nextStep = lead.outreach_step + 1;
-      const nextActionAt =
-        nextStep >= 3
-          ? null
-          : new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
-
-      await supabase.from("leads").update({
-        outreach_step: nextStep,
-        outreach_status: nextStep >= 3 ? "completed" : "queued",
-        last_contacted_at: now,
-        next_action_at: nextActionAt
-      }).eq("id", lead.id);
-
-      await supabase.from("lead_activity").insert({
-        lead_id: lead.id,
-        event_type: "outreach_sent",
-        channel,
-        subject: message.subject,
-        message: message.body,
-        metadata: {
-          step: lead.outreach_step
-        }
-      });
-
-      processed.push({
-        leadId: lead.id,
-        channel,
-        step: nextStep
-      });
     }
 
     return jsonResponse({
@@ -99,6 +131,7 @@ serve(async (request) => {
       processed
     });
   } catch (error) {
-    return jsonResponse({ error: error.message }, 400);
+    const message = error instanceof Error ? error.message : String(error);
+    return jsonResponse({ error: message }, 400);
   }
 });

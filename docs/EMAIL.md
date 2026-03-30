@@ -2,13 +2,19 @@
 
 ## Goal
 
-Send real outreach to businesses through AWS SES from your own domain instead of a personal mailbox.
+Use Resend first for transactional email and only return to SES later if you still need it.
 
 Brand/admin contact inbox:
 - `auroraedgegroup@gmail.com`
 
 Current verified SES sender:
 - `c.rojasalvarez12@outlook.com`
+
+## Recommended now
+
+- Use Resend for order confirmations, intake reminders, and delivery notifications.
+- Treat SES as paused until the revenue path is working cleanly.
+- Do not frame the current use case as cold outreach in SES production-access requests.
 
 ## Zero-dollar start with Outlook
 
