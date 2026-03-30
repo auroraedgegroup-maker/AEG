@@ -12,9 +12,9 @@ Recommended GitHub deploy:
 4. Leave the base directory empty.
 5. Leave the build command empty.
 6. Publish directory is already defined in [netlify.toml](/Users/christopherrojas/Documents/New%20project/aurora-edge-group/netlify.toml) as `site`.
-7. Confirm the live URL is `https://auroraedgeghq.netlify.app`.
-8. In Supabase, set `PUBLIC_SITE_URL=https://auroraedgeghq.netlify.app`.
-9. In Supabase, set `CORS_ORIGIN=https://auroraedgeghq.netlify.app`.
+7. Confirm the live URL is `https://auroraedgeghq.com`.
+8. In Supabase, set `PUBLIC_SITE_URL=https://auroraedgeghq.com`.
+9. In Supabase, set `CORS_ORIGIN=https://auroraedgeghq.com`.
 
 Current live site config should come from:
 - [site/config.js](/Users/christopherrojas/Documents/New%20project/aurora-edge-group/site/config.js)
