@@ -4,6 +4,12 @@
 
 Send real outreach to businesses through AWS SES from your own domain instead of a personal mailbox.
 
+Brand/admin contact inbox:
+- `auroraedgegroup@gmail.com`
+
+Current verified SES sender:
+- `c.rojasalvarez12@outlook.com`
+
 ## Zero-dollar start with Outlook
 
 If you are starting without a domain, you can begin by verifying your Outlook address as the SES sender identity:

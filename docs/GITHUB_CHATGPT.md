@@ -5,6 +5,11 @@
 - Owner: `chrisalvarezr-spec`
 - Repository name: `aurora-edge-group`
 - Suggested visibility: `private` until you are ready to share it
+- GitHub sign-in email: `auroraedgegroup@gmail.com`
+
+Important:
+- GitHub repositories publish under the GitHub username or organization, not the sign-in email.
+- In this project, `auroraedgegroup@gmail.com` is the brand/admin contact email. The repo owner is still `chrisalvarezr-spec` unless you create or switch to an organization.
 
 ## Install local tools
 

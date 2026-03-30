@@ -28,6 +28,8 @@ Main goals:
 
 ### SES
 
+- brand/admin contact:
+  `auroraedgegroup@gmail.com`
 - verified sender:
   `c.rojasalvarez12@outlook.com`
 - production access:

@@ -27,7 +27,7 @@ supabase secrets set \
   SUPABASE_SERVICE_ROLE_KEY=YOUR_SUPABASE_SERVICE_ROLE_KEY \
   PUBLIC_SITE_URL=https://YOUR_NETLIFY_SITE.netlify.app \
   CORS_ORIGIN=https://YOUR_NETLIFY_SITE.netlify.app \
-  ADMIN_EMAIL=you@example.com \
+  ADMIN_EMAIL=auroraedgegroup@gmail.com \
   EMAIL_FROM='Aurora Edge Group <noreply@yourdomain.com>' \
   RESEND_API_KEY=YOUR_RESEND_API_KEY \
   STRIPE_SECRET_KEY=YOUR_STRIPE_SECRET_KEY \
@@ -41,6 +41,8 @@ Optional:
 - `TWILIO_ACCOUNT_SID`
 - `TWILIO_AUTH_TOKEN`
 - `TWILIO_FROM_NUMBER`
+
+Use `ADMIN_EMAIL=auroraedgegroup@gmail.com` as the brand/admin inbox unless you later replace it with a different operations address.
 
 ## 8. Optional ChatGPT knowledge import
 

@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/scripts/use_tools.sh"
 
 WEBSITE_URL="${WEBSITE_URL:-${1:-}}"
-CONTACT_EMAIL="${CONTACT_EMAIL:-c.rojasalvarez12@outlook.com}"
+CONTACT_EMAIL="${CONTACT_EMAIL:-auroraedgegroup@gmail.com}"
 MAIL_TYPE="${MAIL_TYPE:-MARKETING}"
 CONTACT_LANGUAGE="${CONTACT_LANGUAGE:-EN}"
 REGION="${AWS_REGION:-$(aws configure get region || true)}"
