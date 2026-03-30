@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/scripts/use_tools.sh"
 
-OWNER="${GITHUB_OWNER:-chrisalvarezr-spec}"
+OWNER="${GITHUB_OWNER:-auroraedgegroup-maker}"
 REPO_NAME="${GITHUB_REPO:-AEG}"
 VISIBILITY="${GITHUB_VISIBILITY:-private}"
 

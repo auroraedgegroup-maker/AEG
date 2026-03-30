@@ -2,14 +2,14 @@
 
 ## GitHub repo target
 
-- Owner: `chrisalvarezr-spec`
+- Owner: `auroraedgegroup-maker`
 - Repository name: `AEG`
 - Suggested visibility: `private` until you are ready to share it
 - GitHub sign-in email: `auroraedgegroup@gmail.com`
 
 Important:
 - GitHub repositories publish under the GitHub username or organization, not the sign-in email.
-- In this project, `auroraedgegroup@gmail.com` is the brand/admin contact email. The repo owner is still `chrisalvarezr-spec` unless you create or switch to an organization.
+- In this project, `auroraedgegroup@gmail.com` is the brand/admin contact email. The repo owner is `auroraedgegroup-maker`.
 
 ## Install local tools
 
@@ -40,7 +40,7 @@ bash scripts/publish_github_repo.sh
 
 ```bash
 cd /Users/christopherrojas/Documents/New\ project/aurora-edge-group
-git remote add origin git@github.com:chrisalvarezr-spec/AEG.git
+git remote add origin git@github.com:auroraedgegroup-maker/AEG.git
 git push -u origin main
 ```
 
@@ -48,7 +48,7 @@ If you prefer HTTPS:
 
 ```bash
 cd /Users/christopherrojas/Documents/New\ project/aurora-edge-group
-git remote add origin https://github.com/chrisalvarezr-spec/AEG.git
+git remote add origin https://github.com/auroraedgegroup-maker/AEG.git
 git push -u origin main
 ```
 
@@ -58,13 +58,13 @@ git push -u origin main
 2. Go to `Apps`.
 3. Select `GitHub`.
 4. Install and authorize the ChatGPT GitHub app.
-5. Grant access to `chrisalvarezr-spec/AEG`.
+5. Grant access to `auroraedgegroup-maker/AEG`.
 6. Wait about 5 minutes for the repository to appear in ChatGPT.
 
 If the repo still does not appear, search for this in GitHub to trigger indexing:
 
 ```text
-repo:chrisalvarezr-spec/AEG import
+repo:auroraedgegroup-maker/AEG import
 ```
 
 ## What ChatGPT can do after connection

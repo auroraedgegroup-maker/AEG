@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-GITHUB_OWNER="${GITHUB_OWNER:-chrisalvarezr-spec}"
+GITHUB_OWNER="${GITHUB_OWNER:-auroraedgegroup-maker}"
 REPO_NAME="${REPO_NAME:-AEG}"
 REPO_DESC="${REPO_DESC:-Aurora Edge Group AI automation system}"
 
