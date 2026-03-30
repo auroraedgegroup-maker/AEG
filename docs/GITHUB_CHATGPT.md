@@ -3,7 +3,7 @@
 ## GitHub repo target
 
 - Owner: `chrisalvarezr-spec`
-- Repository name: `aurora-edge-group`
+- Repository name: `AEG`
 - Suggested visibility: `private` until you are ready to share it
 - GitHub sign-in email: `auroraedgegroup@gmail.com`
 
@@ -40,7 +40,7 @@ bash scripts/publish_github_repo.sh
 
 ```bash
 cd /Users/christopherrojas/Documents/New\ project/aurora-edge-group
-git remote add origin git@github.com:chrisalvarezr-spec/aurora-edge-group.git
+git remote add origin git@github.com:chrisalvarezr-spec/AEG.git
 git push -u origin main
 ```
 
@@ -48,7 +48,7 @@ If you prefer HTTPS:
 
 ```bash
 cd /Users/christopherrojas/Documents/New\ project/aurora-edge-group
-git remote add origin https://github.com/chrisalvarezr-spec/aurora-edge-group.git
+git remote add origin https://github.com/chrisalvarezr-spec/AEG.git
 git push -u origin main
 ```
 
@@ -58,13 +58,13 @@ git push -u origin main
 2. Go to `Apps`.
 3. Select `GitHub`.
 4. Install and authorize the ChatGPT GitHub app.
-5. Grant access to `chrisalvarezr-spec/aurora-edge-group`.
+5. Grant access to `chrisalvarezr-spec/AEG`.
 6. Wait about 5 minutes for the repository to appear in ChatGPT.
 
 If the repo still does not appear, search for this in GitHub to trigger indexing:
 
 ```text
-repo:chrisalvarezr-spec/aurora-edge-group import
+repo:chrisalvarezr-spec/AEG import
 ```
 
 ## What ChatGPT can do after connection

@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/scripts/use_tools.sh"
 
 OWNER="${GITHUB_OWNER:-chrisalvarezr-spec}"
-REPO_NAME="${GITHUB_REPO:-aurora-edge-group}"
+REPO_NAME="${GITHUB_REPO:-AEG}"
 VISIBILITY="${GITHUB_VISIBILITY:-private}"
 
 if ! command -v gh >/dev/null 2>&1; then

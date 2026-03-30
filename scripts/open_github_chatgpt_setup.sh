@@ -2,7 +2,7 @@
 set -euo pipefail
 
 GITHUB_OWNER="${GITHUB_OWNER:-chrisalvarezr-spec}"
-REPO_NAME="${REPO_NAME:-aurora-edge-group}"
+REPO_NAME="${REPO_NAME:-AEG}"
 REPO_DESC="${REPO_DESC:-Aurora Edge Group AI automation system}"
 
 open "https://github.com/new?owner=${GITHUB_OWNER}&name=${REPO_NAME}&description=${REPO_DESC}"
