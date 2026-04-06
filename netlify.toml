@@ -3,3 +3,18 @@ publish = "site"
 
 [build.processing]
 skip_processing = true
+
+[[headers]]
+for = "/*"
+
+[headers.values]
+X-Content-Type-Options = "nosniff"
+X-Frame-Options = "DENY"
+Referrer-Policy = "no-referrer"
+Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+for = "/config.js"
+
+[headers.values]
+Cache-Control = "no-store"

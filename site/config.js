@@ -1,8 +1,16 @@
 window.APP_CONFIG = {
-  brandName: "Aurora Edge Group",
-  supabaseUrl: "https://tumruwrspoyeynxoxbpt.supabase.co",
-  supabaseAnonKey:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1bXJ1d3JzcG95ZXlueG94YnB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MzUzODYsImV4cCI6MjA5MDQxMTM4Nn0.w1sAMpqmke-R-t4ba8gHKm9bVfpVkeEhLs7oLxOw6UQ",
+  businessName: "Aurora Edge Group HQ",
+  brandShort: "AEG",
+  publicSiteUrl: "https://auroraedgeghq.com",
   functionsBaseUrl: "https://tumruwrspoyeynxoxbpt.supabase.co/functions/v1",
-  publicSiteUrl: "https://auroraedgeghq.com"
+  infoEmail: "info@auroraedgeghq.com",
+  supportEmail: "support@auroraedgeghq.com",
+  billingEmail: "billing@auroraedgeghq.com",
+  phone: "+16507195861",
+  phoneDisplay: "+1 650 719 5861",
+  stripeLinks: {
+    "followup-audit": "STRIPE_AUDIT_LINK",
+    "missed-call-system": "STRIPE_SETUP_LINK",
+    "lead-reactivation": "STRIPE_SPRINT_LINK",
+  },
 };

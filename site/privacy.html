@@ -3,51 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aurora Edge Group | Privacy</title>
+    <title>Privacy | Aurora Edge Group HQ</title>
+    <meta
+      name="description"
+      content="Privacy information for Aurora Edge Group HQ and how lead, checkout, and contact data are handled."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
-    <div class="page-shell page-shell-tight">
-      <main class="panel info-panel">
-        <span class="eyebrow">Privacy</span>
-        <h1>Privacy Notice</h1>
-        <div class="info-grid">
-          <div class="full-width">
-            <h3>Information collected</h3>
+  <body data-page="privacy">
+    <div class="site-noise"></div>
+
+    <header class="site-header">
+      <div class="container nav-shell">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">AEG</span>
+          <span class="brand-copy">
+            <strong data-business-name>Aurora Edge Group HQ</strong>
+            <span>AI Revenue Systems</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="./index.html">Home</a>
+          <a href="./contact.html">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section simple-page">
+      <div class="container">
+        <section class="page-hero reveal">
+          <span class="eyebrow">Privacy</span>
+          <h1>How Aurora Edge Group HQ handles site data</h1>
+          <p class="section-copy">
+            The site collects contact details only to route paid offers, free audit
+            requests, and general inquiries into the correct business workflow.
+          </p>
+        </section>
+
+        <section class="legal-grid">
+          <article class="info-card reveal">
+            <span class="meta-label">Lead requests</span>
             <p>
-              Aurora Edge Group collects contact details and business details that visitors submit through the audit
-              form and client intake form on this website.
+              Free audit requests and general inquiries are stored for follow-up,
+              acknowledgment, and internal routing.
             </p>
-          </div>
-          <div class="full-width">
-            <h3>How information is used</h3>
+          </article>
+          <article class="info-card reveal">
+            <span class="meta-label">Paid checkout</span>
             <p>
-              Submitted information is used to respond to inbound requests, deliver purchased services,
-              provide requested follow-up, and operate client onboarding and fulfillment workflows.
+              Paid offers route through secure Stripe checkout. Post-purchase intake
+              is used only to prepare delivery and support the purchased service.
             </p>
-          </div>
-          <div class="full-width">
-            <h3>Communication</h3>
+          </article>
+          <article class="info-card reveal">
+            <span class="meta-label">Support and billing</span>
             <p>
-              Aurora Edge Group sends email related to requested audits, purchased services, onboarding,
-              delivery, and follow-up that the visitor requested through this website.
+              Support issues route to <a data-support-email-link href="mailto:support@auroraedgeghq.com">support@auroraedgeghq.com</a>.
+              Billing issues route to <a data-billing-email-link href="mailto:billing@auroraedgeghq.com">billing@auroraedgeghq.com</a>.
             </p>
-          </div>
-          <div class="full-width">
-            <h3>Contact</h3>
+          </article>
+          <article class="info-card reveal">
+            <span class="meta-label">General contact</span>
             <p>
-              Questions about this notice can be sent to
-              <a href="mailto:auroraedgegroup@gmail.com">auroraedgegroup@gmail.com</a>.
+              For general questions or partnership inquiries, use
+              <a data-info-email-link href="mailto:info@auroraedgeghq.com">info@auroraedgeghq.com</a>.
             </p>
-          </div>
-        </div>
-      </main>
-    </div>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
   </body>
 </html>

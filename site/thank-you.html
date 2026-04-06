@@ -3,75 +3,98 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aurora Edge Group | Client Intake</title>
+    <title>Complete Your Intake | Aurora Edge Group HQ</title>
+    <meta
+      name="description"
+      content="Complete your Aurora Edge Group HQ intake so we can build your purchased audit or implementation deliverable."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
-    <div class="page-shell page-shell-tight">
-      <main class="panel intake-panel">
-        <span class="eyebrow">Payment received</span>
-        <h1>Client intake</h1>
-        <p class="hero-text">
-          Complete this form once. Aurora Edge Group will generate the audit or implementation pack
-          automatically after submission.
-        </p>
+  <body data-page="thank-you">
+    <div class="site-noise"></div>
 
-        <form id="intake-form" class="lead-form">
-          <label>
-            Website URL
-            <input type="url" name="website" placeholder="https://yourbusiness.com" required />
-          </label>
-          <label>
-            Main service sold
-            <input type="text" name="primaryOffer" placeholder="Roof replacements" required />
-          </label>
-          <label>
-            City or service area
-            <input type="text" name="serviceArea" placeholder="Louisville, KY" required />
-          </label>
-          <label>
-            CRM today
-            <input type="text" name="crm" placeholder="GoHighLevel, HubSpot, Jobber, none" />
-          </label>
-          <label class="full-width">
-            Current follow-up process
-            <textarea
-              name="salesFollowUp"
-              rows="4"
-              placeholder="Describe what happens after a form fill, missed call, estimate, or inbound lead."
-              required
-            ></textarea>
-          </label>
-          <label class="full-width">
-            Main goal in the next 30 days
-            <textarea
-              name="goals"
-              rows="3"
-              placeholder="Example: book 10 extra estimate appointments, revive old pipeline, stop losing missed calls."
-              required
-            ></textarea>
-          </label>
-          <label class="full-width">
-            Notes for the build
-            <textarea
-              name="notes"
-              rows="4"
-              placeholder="Brand voice, competitors, team details, offer details, links, and constraints."
-            ></textarea>
-          </label>
-          <div class="form-actions full-width">
-            <button class="primary-button" type="submit">Submit Intake</button>
-            <span id="intake-form-status" class="status-text"></span>
+    <header class="site-header">
+      <div class="container nav-shell">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">AEG</span>
+          <span class="brand-copy">
+            <strong data-business-name>Aurora Edge Group HQ</strong>
+            <span>AI Revenue Systems</span>
+          </span>
+        </a>
+        <div class="nav-actions">
+          <a class="nav-link-pill" data-support-email-link href="mailto:support@auroraedgeghq.com">Need help?</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="section simple-page">
+      <div class="container">
+        <section class="page-hero reveal">
+          <span class="eyebrow">Post-purchase intake</span>
+          <h1>You’re in. Let’s build the system correctly.</h1>
+          <p class="section-copy">
+            Fill out the intake below so we can prepare your audit or implementation
+            deliverable. If you need delivery help, reply to
+            <a data-support-email-link href="mailto:support@auroraedgeghq.com">support@auroraedgeghq.com</a>.
+            For payment or invoice questions, use
+            <a data-billing-email-link href="mailto:billing@auroraedgeghq.com">billing@auroraedgeghq.com</a>.
+          </p>
+          <div class="session-pill" data-session-state>Looking for your paid session…</div>
+        </section>
+
+        <section class="thank-you-grid">
+          <div class="info-card reveal">
+            <span class="meta-label">What happens next</span>
+            <ul class="offer-list">
+              <li>Submit the intake</li>
+              <li>We queue the deliverable</li>
+              <li>You receive the audit or implementation assets</li>
+              <li>Support stays available for questions and handoff clarity</li>
+            </ul>
           </div>
-        </form>
-      </main>
-    </div>
+
+          <form class="glass-form reveal" data-intake-form>
+            <label>
+              Website
+              <input type="url" name="website" placeholder="https://yourbusiness.com" />
+            </label>
+            <label>
+              Primary offer or service
+              <input type="text" name="primaryOffer" placeholder="Main offer, service, or sales focus" />
+            </label>
+            <label>
+              Service area
+              <input type="text" name="serviceArea" placeholder="Cities, regions, or target territory" />
+            </label>
+            <label>
+              CRM or booking stack
+              <input type="text" name="crm" placeholder="Jobber, GoHighLevel, HubSpot, Housecall Pro, none yet" />
+            </label>
+            <label>
+              Current follow-up
+              <input type="text" name="salesFollowUp" placeholder="Manual, slow, no SMS, inconsistent, etc." />
+            </label>
+            <label class="full-span">
+              Goals
+              <textarea name="goals" rows="4" placeholder="More booked jobs, faster responses, better follow-up, reactivation, etc."></textarea>
+            </label>
+            <label class="full-span">
+              Notes
+              <textarea name="notes" rows="5" placeholder="Anything we should know before building the audit or system."></textarea>
+            </label>
+            <button class="button button-primary" type="submit">Submit Intake</button>
+            <p class="form-feedback" data-intake-form-status></p>
+          </form>
+        </section>
+      </div>
+    </main>
 
     <script src="./config.js"></script>
     <script src="./app.js"></script>

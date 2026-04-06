@@ -3,41 +3,127 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aurora Edge Group | Contact</title>
+    <title>Contact Aurora Edge Group HQ</title>
+    <meta
+      name="description"
+      content="Contact Aurora Edge Group HQ for AI audits, support questions, billing, or general partnership inquiries."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
-    <div class="page-shell page-shell-tight">
-      <main class="panel info-panel">
-        <span class="eyebrow">Contact</span>
-        <h1>Aurora Edge Group</h1>
-        <p class="hero-text">
-          Aurora Edge Group builds AI follow-up, funnel, CRM, and intake systems for local service businesses.
-        </p>
-        <div class="info-grid">
-          <div>
-            <h3>Email</h3>
-            <p><a href="mailto:auroraedgegroup@gmail.com">auroraedgegroup@gmail.com</a></p>
-          </div>
-          <div>
-            <h3>Website</h3>
-            <p><a href="./index.html">Return to the main site</a></p>
-          </div>
-          <div class="full-width">
-            <h3>Communication policy</h3>
-            <p>
-              Aurora Edge Group uses email for inbound lead follow-up, service onboarding, client delivery,
-              and requested operational communication related to offers shown on this site.
-            </p>
-          </div>
+  <body data-page="contact">
+    <div class="site-noise"></div>
+
+    <header class="site-header">
+      <div class="container nav-shell">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">AEG</span>
+          <span class="brand-copy">
+            <strong data-business-name>Aurora Edge Group HQ</strong>
+            <span>AI Revenue Systems</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="./index.html#offers">Offers</a>
+          <a href="./index.html#free-audit">Free Audit</a>
+          <a href="./privacy.html">Privacy</a>
+        </nav>
+        <div class="nav-actions">
+          <a class="nav-link-pill" data-phone-link href="tel:+16507195861" data-phone-display>+1 650 719 5861</a>
         </div>
-      </main>
-    </div>
+      </div>
+    </header>
+
+    <main class="section simple-page">
+      <div class="container">
+        <section class="page-hero reveal">
+          <span class="eyebrow">Contact</span>
+          <h1>Talk to Aurora Edge Group HQ</h1>
+          <p class="section-copy">
+            Use the right route for the fastest response. General sales and inquiry
+            questions go to info. Existing customer help goes to support. Payment,
+            invoice, or refund questions go to billing.
+          </p>
+        </section>
+
+        <section class="contact-route-grid">
+          <article class="info-card reveal">
+            <span class="meta-label">General info</span>
+            <h3>Sales, partnerships, and audit questions</h3>
+            <a data-info-email-link href="mailto:info@auroraedgeghq.com">info@auroraedgeghq.com</a>
+          </article>
+          <article class="info-card reveal">
+            <span class="meta-label">Support</span>
+            <h3>Delivery, setup, or implementation help</h3>
+            <a data-support-email-link href="mailto:support@auroraedgeghq.com">support@auroraedgeghq.com</a>
+          </article>
+          <article class="info-card reveal">
+            <span class="meta-label">Billing</span>
+            <h3>Invoices, refunds, payment, and receipts</h3>
+            <a data-billing-email-link href="mailto:billing@auroraedgeghq.com">billing@auroraedgeghq.com</a>
+          </article>
+        </section>
+
+        <section class="contact-page-grid">
+          <div class="info-card reveal">
+            <span class="eyebrow">AI receptionist</span>
+            <h2>Need help fast?</h2>
+            <p class="section-copy">
+              Chat with the AI receptionist for quick answers and next steps, or
+              call the business line directly if you already know what you need.
+            </p>
+            <a class="button button-secondary" data-phone-link href="tel:+16507195861" data-phone-display>+1 650 719 5861</a>
+          </div>
+
+          <form class="glass-form reveal" data-contact-form>
+            <label>
+              Name
+              <input type="text" name="name" required />
+            </label>
+            <label>
+              Business name
+              <input type="text" name="businessName" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" required />
+            </label>
+            <label>
+              Phone
+              <input type="tel" name="phone" />
+            </label>
+            <label>
+              Topic
+              <select name="niche">
+                <option value="">Choose a topic</option>
+                <option value="General Inquiry">General Inquiry</option>
+                <option value="Fast Audit">Fast Audit</option>
+                <option value="AI Receptionist">AI Receptionist</option>
+                <option value="Lead Follow-Up">Lead Follow-Up</option>
+              </select>
+            </label>
+            <label class="full-span">
+              Message
+              <textarea name="notes" rows="5" placeholder="Tell us what you need help with."></textarea>
+            </label>
+            <button class="button button-primary" type="submit">Send Inquiry</button>
+            <p class="form-feedback" data-contact-form-status></p>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <script
+      src="https://ionos.ai-voice-receptionist.com/chat-scripts-MqGN74WP/web-chat.js"
+      name="web-chat"
+      data-client-secret="9967da09-5cae-43a1-8fe0-b3613589c1b4">
+    </script>
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
   </body>
 </html>
