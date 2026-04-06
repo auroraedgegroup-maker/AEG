@@ -1,3 +1,9 @@
+window.AEG_PAYMENT_LINKS = {
+  audit: "https://book.stripe.com/8x29AUcpz0Fla4I7TC8k800",
+  setup: "https://book.stripe.com/9B6fZicpz2Nt0u80ra8k801",
+  monthly: "https://buy.stripe.com/8x2fZi89j2Ntgt6ddW8k802",
+};
+
 window.APP_CONFIG = {
   businessName: "Aurora Edge Group HQ",
   brandShort: "AEG",
@@ -9,8 +15,8 @@ window.APP_CONFIG = {
   phone: "+16507195861",
   phoneDisplay: "+1 650 719 5861",
   stripeLinks: {
-    "followup-audit": "STRIPE_AUDIT_LINK",
-    "missed-call-system": "STRIPE_SETUP_LINK",
-    "lead-reactivation": "STRIPE_SPRINT_LINK",
+    "followup-audit": window.AEG_PAYMENT_LINKS.audit,
+    "system-setup": window.AEG_PAYMENT_LINKS.setup,
+    "monthly-system": window.AEG_PAYMENT_LINKS.monthly,
   },
 };

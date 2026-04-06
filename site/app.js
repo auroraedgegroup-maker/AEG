@@ -9,24 +9,6 @@
   const phoneDisplay = getConfigText("phoneDisplay", "+1 650 719 5861");
   const publicSiteUrl = getConfigText("publicSiteUrl", window.location.origin);
 
-  const offerMeta = {
-    "followup-audit": {
-      title: "AI Follow-Up Audit",
-      description:
-        "Start with the $297 audit and continue to secure Stripe checkout.",
-    },
-    "missed-call-system": {
-      title: "Missed Call Text-Back Setup",
-      description:
-        "Continue to secure Stripe checkout for the missed call text-back setup.",
-    },
-    "lead-reactivation": {
-      title: "Lead Reactivation Sprint",
-      description:
-        "Continue to secure Stripe checkout for the reactivation sprint.",
-    },
-  };
-
   function getConfigText(key, fallback) {
     return typeof config[key] === "string" && config[key].trim()
       ? config[key].trim()
@@ -142,77 +124,32 @@
   }
 
   function resolveStripeLink(offerId) {
-    const stripeLinks = config.stripeLinks || {};
+    const stripeLinks = config.stripeLinks || window.AEG_PAYMENT_LINKS || {};
     const candidate = stripeLinks[offerId];
     return isConfiguredUrl(candidate) ? candidate : "";
   }
 
-  function bindHomeCheckout() {
-    const modal = document.getElementById("checkout-modal");
-    const form = document.querySelector("[data-checkout-form]");
-    const statusNode = document.querySelector("[data-checkout-form-status]");
-    const modalTitle = document.getElementById("checkout-modal-title");
-    const modalCopy = document.getElementById("checkout-modal-copy");
-    if (!form || !modal) return;
+  function bindPaidLinks() {
+    document.querySelectorAll("[data-stripe-link]").forEach((node) => {
+      const offerId = node.getAttribute("data-stripe-link");
+      const stripeLink = resolveStripeLink(offerId);
 
-    const openModal = (offerId) => {
-      const meta = offerMeta[offerId] || offerMeta["followup-audit"];
-      form.elements.offerId.value = offerId;
-      modalTitle.textContent = meta.title;
-      modalCopy.textContent = meta.description;
-      modal.classList.remove("hidden");
-      modal.setAttribute("aria-hidden", "false");
-      setFeedback(statusNode, "", "");
-      setTimeout(() => {
-        const firstField = form.querySelector("input[name='name']");
-        if (firstField) firstField.focus();
-      }, 0);
-    };
+      node.setAttribute("target", "_blank");
+      node.setAttribute("rel", "noopener noreferrer");
 
-    const closeModal = () => {
-      modal.classList.add("hidden");
-      modal.setAttribute("aria-hidden", "true");
-    };
-
-    document.querySelectorAll(".checkout-trigger").forEach((button) => {
-      button.addEventListener("click", () => {
-        const offerId = button.getAttribute("data-offer-id");
-        const stripeLink = resolveStripeLink(offerId);
-        if (stripeLink) {
-          window.location.href = stripeLink;
-          return;
-        }
-        openModal(offerId);
-      });
-    });
-
-    modal.querySelectorAll("[data-modal-close]").forEach((node) => {
-      node.addEventListener("click", closeModal);
-    });
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      setFeedback(statusNode, "Preparing secure checkout…", "");
-
-      const payload = {
-        offerId: form.elements.offerId.value,
-        name: form.elements.name.value.trim(),
-        businessName: form.elements.businessName.value.trim(),
-        email: form.elements.email.value.trim(),
-        phone: form.elements.phone.value.trim(),
-        website: form.elements.website.value.trim(),
-        source: "website_paid_offer",
-      };
-
-      try {
-        const data = await requestJson(getFunctionUrl("create-checkout"), payload);
-        if (!data.checkoutUrl) {
-          throw new Error("Checkout URL missing from response.");
-        }
-        window.location.href = data.checkoutUrl;
-      } catch (error) {
-        setFeedback(statusNode, error.message || "Unable to start checkout.", "is-error");
+      if (stripeLink) {
+        node.setAttribute("href", stripeLink);
+        node.removeAttribute("aria-disabled");
+        node.removeAttribute("tabindex");
+        node.classList.remove("is-disabled");
+        return;
       }
+
+      node.setAttribute("href", "#");
+      node.setAttribute("aria-disabled", "true");
+      node.setAttribute("tabindex", "-1");
+      node.classList.add("is-disabled");
+      node.setAttribute("title", "Add the live Stripe Payment Link in site/config.js");
     });
   }
 
@@ -338,7 +275,7 @@
   enhanceHeader();
   bindRevealAnimations();
   showCancelMessage();
-  bindHomeCheckout();
+  bindPaidLinks();
   bindLeadForm();
   bindContactForm();
   bindThankYouForm();
