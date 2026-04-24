@@ -15,7 +15,11 @@ serve(async (request) => {
     const authHeader = request.headers.get("authorization") || "";
     const bearer = authHeader.replace("Bearer ", "");
 
-    if (requiredToken && bearer !== requiredToken) {
+    if (!requiredToken) {
+      return jsonResponse({ error: "RUN_OUTREACH_TOKEN is not configured" }, 500);
+    }
+
+    if (bearer !== requiredToken) {
       return jsonResponse({ error: "Unauthorized" }, 401);
     }
 

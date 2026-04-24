@@ -9,17 +9,17 @@ serve(async (request) => {
 
   try {
     const body = await request.json();
-    const sessionId = String(body.sessionId || "").trim();
+    const intakeToken = String(body.intakeToken || "").trim();
 
-    if (!sessionId) {
-      throw new Error("sessionId is required");
+    if (!intakeToken) {
+      throw new Error("intakeToken is required");
     }
 
     const supabase = createServiceClient();
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .select("id, lead_id, status")
-      .eq("stripe_checkout_session_id", sessionId)
+      .eq("intake_token", intakeToken)
       .single();
 
     if (orderError || !order) {
