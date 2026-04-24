@@ -11,6 +11,7 @@ What is included:
 - SES domain sender and outreach scripts for real business email sending
 - Prepared first-wave outreach campaign and preview flow
 - CSV import script for local business lead lists
+- Manual outreach MVP scripts for campaign prospect imports and status tracking
 - Deployment and operating docs
 
 Start here:
