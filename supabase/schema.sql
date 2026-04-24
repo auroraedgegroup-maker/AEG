@@ -183,9 +183,14 @@ create table if not exists public.outreach_prospects (
   city text,
   notes text,
   status text not null default 'draft',
+  ready_to_send_at timestamptz,
+  skipped_at timestamptz,
   sent_at timestamptz,
   replied_at timestamptz,
-  booked_call_at timestamptz
+  positive_reply_at timestamptz,
+  booked_call_at timestamptz,
+  last_message_subject text,
+  last_message_body text
 );
 
 create index if not exists outreach_prospects_campaign_idx
@@ -232,7 +237,90 @@ begin
   ) then
     alter table public.outreach_prospects
       add constraint outreach_prospects_status_check
-      check (status in ('draft', 'sent', 'replied', 'booked', 'won', 'lost'));
+      check (status in ('draft', 'ready_to_send', 'sent', 'skipped', 'replied', 'booked', 'won', 'lost'));
+  end if;
+end
+$$;
+
+alter table public.outreach_prospects
+  add column if not exists ready_to_send_at timestamptz;
+
+alter table public.outreach_prospects
+  add column if not exists skipped_at timestamptz;
+
+alter table public.outreach_prospects
+  add column if not exists positive_reply_at timestamptz;
+
+alter table public.outreach_prospects
+  add column if not exists last_message_subject text;
+
+alter table public.outreach_prospects
+  add column if not exists last_message_body text;
+
+do $$
+begin
+  if exists (
+    select 1
+    from pg_constraint
+    where conname = 'outreach_prospects_status_check'
+      and conrelid = 'public.outreach_prospects'::regclass
+  ) then
+    alter table public.outreach_prospects
+      drop constraint outreach_prospects_status_check;
+  end if;
+end
+$$;
+
+alter table public.outreach_prospects
+  add constraint outreach_prospects_status_check
+  check (status in ('draft', 'ready_to_send', 'sent', 'skipped', 'replied', 'booked', 'won', 'lost'));
+
+create table if not exists public.outreach_activity_log (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  prospect_id uuid not null references public.outreach_prospects(id) on delete cascade,
+  campaign_id uuid not null references public.outreach_campaigns(id) on delete cascade,
+  event_type text not null,
+  message_subject text,
+  message_body text,
+  metadata jsonb not null default '{}'::jsonb
+);
+
+create index if not exists outreach_activity_log_campaign_idx
+  on public.outreach_activity_log (campaign_id, created_at desc);
+
+create index if not exists outreach_activity_log_prospect_idx
+  on public.outreach_activity_log (prospect_id, created_at desc);
+
+create table if not exists public.outreach_followups (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  prospect_id uuid not null references public.outreach_prospects(id) on delete cascade,
+  campaign_id uuid not null references public.outreach_campaigns(id) on delete cascade,
+  followup_step integer not null default 1,
+  scheduled_for timestamptz not null,
+  status text not null default 'scheduled',
+  message_subject text,
+  message_body text,
+  notes text,
+  prepared_at timestamptz not null default now(),
+  sent_at timestamptz
+);
+
+create index if not exists outreach_followups_schedule_idx
+  on public.outreach_followups (campaign_id, status, scheduled_for);
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'outreach_followups_status_check'
+  ) then
+    alter table public.outreach_followups
+      add constraint outreach_followups_status_check
+      check (status in ('scheduled', 'ready_to_send', 'sent', 'skipped', 'canceled'));
   end if;
 end
 $$;
@@ -290,4 +378,9 @@ for each row execute procedure public.set_updated_at();
 drop trigger if exists set_updated_at_outreach_prospects on public.outreach_prospects;
 create trigger set_updated_at_outreach_prospects
 before update on public.outreach_prospects
+for each row execute procedure public.set_updated_at();
+
+drop trigger if exists set_updated_at_outreach_followups on public.outreach_followups;
+create trigger set_updated_at_outreach_followups
+before update on public.outreach_followups
 for each row execute procedure public.set_updated_at();

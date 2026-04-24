@@ -23,6 +23,17 @@ Use `docs/OUTREACH_MVP_MANUAL_CAMPAIGN.md` for the safe manual campaign workflow
 - manual status tracking (`sent`, `replied`, `booked`, `won`)
 - no bulk auto-send
 
+## Semi-automated outreach operations
+
+Use `docs/OUTREACH_SEMI_AUTOMATED_WORKFLOW.md` to run the queue + manual approval workflow:
+
+- queue daily prospects as `ready_to_send` (default 8, configurable)
+- review manual approvals and execute one-by-one (`send-now` / `skip`)
+- log outreach activity + message content used
+- record replies and positive replies
+- schedule follow-ups for later manual sends
+- print a daily summary report
+
 ## ChatGPT knowledge
 
 1. Export your ChatGPT conversations.

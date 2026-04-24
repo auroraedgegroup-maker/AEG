@@ -12,6 +12,7 @@ What is included:
 - Prepared first-wave outreach campaign and preview flow
 - CSV import script for local business lead lists
 - Manual outreach MVP scripts for campaign prospect imports and status tracking
+- Semi-automated outreach workflow script for daily queueing, manual approvals, follow-up scheduling, and daily reporting
 - Deployment and operating docs
 
 Start here:

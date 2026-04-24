@@ -8,7 +8,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-ALLOWED_STATUSES = {"draft", "sent", "replied", "booked", "won", "lost"}
+ALLOWED_STATUSES = {"draft", "ready_to_send", "sent", "skipped", "replied", "booked", "won", "lost"}
 
 
 def fail(message: str) -> None:
@@ -65,6 +65,12 @@ def main() -> None:
 
     if status in {"sent", "replied", "booked", "won"}:
         payload["sent_at"] = now
+
+    if status == "ready_to_send":
+        payload["ready_to_send_at"] = now
+
+    if status == "skipped":
+        payload["skipped_at"] = now
 
     if status in {"replied", "booked", "won"}:
         payload["replied_at"] = now
