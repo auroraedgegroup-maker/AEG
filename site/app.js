@@ -229,17 +229,17 @@
     if (!form || !sessionNode) return;
 
     const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get("session_id") || "";
+    const intakeToken = params.get("intake_token") || "";
 
-    if (!sessionId) {
+    if (!intakeToken) {
       sessionNode.textContent =
-        "No checkout session detected. Use the secure checkout flow first, then return here automatically.";
+        "No secure intake token detected. Use the secure checkout flow first, then return here automatically.";
       sessionNode.classList.add("is-warning");
       form.querySelector("button[type='submit']").disabled = true;
       return;
     }
 
-    sessionNode.textContent = `Secure session detected: ${sessionId.slice(0, 12)}…`;
+    sessionNode.textContent = `Secure intake token detected: ${intakeToken.slice(0, 12)}…`;
     sessionNode.classList.add("is-success");
 
     form.addEventListener("submit", async (event) => {
@@ -247,7 +247,7 @@
       setFeedback(statusNode, "Submitting intake…", "");
 
       const payload = {
-        sessionId,
+        intakeToken,
         website: form.elements.website.value.trim(),
         primaryOffer: form.elements.primaryOffer.value.trim(),
         serviceArea: form.elements.serviceArea.value.trim(),

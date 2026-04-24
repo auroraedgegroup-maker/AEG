@@ -42,7 +42,7 @@ serve(async (request) => {
           delivery_error: null
         })
         .eq("stripe_checkout_session_id", session.id)
-        .select("id, lead_id, client_email, client_name, offer_name")
+        .select("id, lead_id, client_email, client_name, offer_name, intake_token")
         .single();
 
       if (orderError) {
@@ -73,7 +73,7 @@ serve(async (request) => {
           await sendEmail({
             to: order.client_email,
             subject: `${order.offer_name}: complete your intake`,
-            text: `Hi ${order.client_name},\n\nPayment is in. Complete your intake here so Aurora Edge Group can generate your delivery pack:\n${publicSiteUrl}/thank-you.html?session_id=${session.id}\n`
+            text: `Hi ${order.client_name},\n\nPayment is in. Complete your intake here so Aurora Edge Group can generate your delivery pack:\n${publicSiteUrl}/thank-you.html?intake_token=${order.intake_token}\n`
           });
         } else {
           await supabase.from("lead_activity").insert({
@@ -96,7 +96,7 @@ serve(async (request) => {
             await sendEmail({
               to: adminEmail,
               subject: `Paid order: ${order.offer_name}`,
-              text: `Client: ${order.client_name}\nEmail: ${order.client_email}\nIntake URL: ${publicSiteUrl}/thank-you.html?session_id=${session.id}`
+              text: `Client: ${order.client_name}\nEmail: ${order.client_email}\nIntake URL: ${publicSiteUrl}/thank-you.html?intake_token=${order.intake_token}`
             });
           } catch (adminError) {
             const adminMessage =

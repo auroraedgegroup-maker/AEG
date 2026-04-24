@@ -32,6 +32,7 @@ serve(async (request) => {
     }
 
     const supabase = createServiceClient();
+    const intakeToken = crypto.randomUUID().replaceAll("-", "");
 
     const { data: lead, error: leadError } = await supabase
       .from("leads")
@@ -62,13 +63,14 @@ serve(async (request) => {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
-      success_url: `${publicSiteUrl}/thank-you.html?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${publicSiteUrl}/thank-you.html?intake_token=${intakeToken}`,
       cancel_url: `${publicSiteUrl}/?checkout=cancelled`,
       customer_email: email,
       metadata: {
         order_id: orderId,
         lead_id: lead.id,
-        offer_id: offer.id
+        offer_id: offer.id,
+        intake_token: intakeToken
       },
       line_items: configuredPriceId
         ? [
@@ -102,6 +104,7 @@ serve(async (request) => {
       status: "pending",
       client_name: name,
       client_email: email,
+      intake_token: intakeToken,
       success_url: `${publicSiteUrl}/thank-you.html`,
       cancel_url: `${publicSiteUrl}/`
     });
