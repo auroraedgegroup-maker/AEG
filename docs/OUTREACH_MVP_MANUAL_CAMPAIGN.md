@@ -88,3 +88,9 @@ Status transitions are manual by design. Timestamp fields are written automatica
 - No bulk send automation is enabled in this workflow.
 - No public homepage UX was changed.
 - Every action is explicit and reversible through Supabase records.
+
+## Optional next step
+
+For the queue + approval + reporting workflow, use:
+
+- `docs/OUTREACH_SEMI_AUTOMATED_WORKFLOW.md`
