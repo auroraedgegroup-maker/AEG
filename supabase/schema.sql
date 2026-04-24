@@ -132,6 +132,111 @@ create table if not exists public.lead_activity (
 
 create index if not exists lead_activity_lead_idx on public.lead_activity (lead_id, created_at desc);
 
+create table if not exists public.outreach_campaigns (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  name text not null,
+  channel text not null default 'email',
+  sender_email text,
+  description text,
+  status text not null default 'draft'
+);
+
+create table if not exists public.outreach_email_templates (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  campaign_id uuid not null references public.outreach_campaigns(id) on delete cascade,
+  name text not null,
+  subject text not null,
+  body text not null,
+  is_active boolean not null default true
+);
+
+create index if not exists outreach_email_templates_campaign_idx
+  on public.outreach_email_templates (campaign_id, is_active);
+
+create table if not exists public.outreach_sms_templates (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  campaign_id uuid not null references public.outreach_campaigns(id) on delete cascade,
+  name text not null,
+  body text not null,
+  is_active boolean not null default true
+);
+
+create index if not exists outreach_sms_templates_campaign_idx
+  on public.outreach_sms_templates (campaign_id, is_active);
+
+create table if not exists public.outreach_prospects (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  campaign_id uuid not null references public.outreach_campaigns(id) on delete cascade,
+  name text not null,
+  business_name text not null,
+  email text,
+  phone text,
+  website text,
+  city text,
+  notes text,
+  status text not null default 'draft',
+  sent_at timestamptz,
+  replied_at timestamptz,
+  booked_call_at timestamptz
+);
+
+create index if not exists outreach_prospects_campaign_idx
+  on public.outreach_prospects (campaign_id, status);
+
+create unique index if not exists outreach_prospects_campaign_email_idx
+  on public.outreach_prospects (campaign_id, lower(email))
+  where email is not null and email <> '';
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'outreach_campaigns_status_check'
+  ) then
+    alter table public.outreach_campaigns
+      add constraint outreach_campaigns_status_check
+      check (status in ('draft', 'active', 'paused', 'completed'));
+  end if;
+end
+$$;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'outreach_campaigns_channel_check'
+  ) then
+    alter table public.outreach_campaigns
+      add constraint outreach_campaigns_channel_check
+      check (channel in ('email', 'sms', 'mixed'));
+  end if;
+end
+$$;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'outreach_prospects_status_check'
+  ) then
+    alter table public.outreach_prospects
+      add constraint outreach_prospects_status_check
+      check (status in ('draft', 'sent', 'replied', 'booked', 'won', 'lost'));
+  end if;
+end
+$$;
+
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -165,4 +270,24 @@ for each row execute procedure public.set_updated_at();
 drop trigger if exists set_updated_at_knowledge_documents on public.knowledge_documents;
 create trigger set_updated_at_knowledge_documents
 before update on public.knowledge_documents
+for each row execute procedure public.set_updated_at();
+
+drop trigger if exists set_updated_at_outreach_campaigns on public.outreach_campaigns;
+create trigger set_updated_at_outreach_campaigns
+before update on public.outreach_campaigns
+for each row execute procedure public.set_updated_at();
+
+drop trigger if exists set_updated_at_outreach_email_templates on public.outreach_email_templates;
+create trigger set_updated_at_outreach_email_templates
+before update on public.outreach_email_templates
+for each row execute procedure public.set_updated_at();
+
+drop trigger if exists set_updated_at_outreach_sms_templates on public.outreach_sms_templates;
+create trigger set_updated_at_outreach_sms_templates
+before update on public.outreach_sms_templates
+for each row execute procedure public.set_updated_at();
+
+drop trigger if exists set_updated_at_outreach_prospects on public.outreach_prospects;
+create trigger set_updated_at_outreach_prospects
+before update on public.outreach_prospects
 for each row execute procedure public.set_updated_at();

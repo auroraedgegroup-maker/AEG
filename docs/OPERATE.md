@@ -14,6 +14,15 @@ python3 scripts/import_leads.py templates/leads-template.csv
 3. Trigger `run-outreach`.
 4. Answer paid client replies and install upsells.
 
+## Manual outreach MVP (HVAC Top 10)
+
+Use `docs/OUTREACH_MVP_MANUAL_CAMPAIGN.md` for the safe manual campaign workflow:
+
+- campaign table + templates
+- CSV prospect import
+- manual status tracking (`sent`, `replied`, `booked`, `won`)
+- no bulk auto-send
+
 ## ChatGPT knowledge
 
 1. Export your ChatGPT conversations.
